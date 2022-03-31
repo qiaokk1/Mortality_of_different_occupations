@@ -1,6 +1,6 @@
 --- 
-title: "YOUR TITLE HERE"
-author: "YOUR NAMES HERE"
+title: "The mortality of occupations based on the salary and education level"
+author: "Zhongtian Qiao & Haoyuan Sun"
 date: "`r Sys.Date()`"
 site: bookdown::bookdown_site
 ---
