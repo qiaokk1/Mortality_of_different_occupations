@@ -1,4 +1,4 @@
-#The mortality of occupations based on the salary and education level
+# The mortality of occupations based on the salary and education level
 
 ## Based on this topic, we want to find out
 
