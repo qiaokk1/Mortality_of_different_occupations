@@ -1,1 +1,50 @@
 # Data transformation
+
+## Education and training assignments by detailed occupation(2020)
+
+### Educational attainment distribution for workers 25 years and older by detailed occupation
+```{r}
+education_distribution <- education_distribution %>%
+  rename(occupation=`2020 National Employment Matrix title`, occupation_code=`2020 National Employment Matrix code`) %>%
+  drop_na(occupation_code) %>%
+  pivot_longer(3:9,names_to = "education_level", values_to = "percentage")
+
+
+education_distribution$occupation <- str_remove_all(education_distribution$occupation,"[(1)]")
+#Remove all "(1)" in occupation.
+education_distribution$education_level <- factor(education_distribution$education_level) %>%
+  fct_relevel("Less than high school diploma","High school diploma or equivalent","Some college, no degree","Associate's degree","Bachelor's degree","Master's degree","Doctoral or professional degree")
+#Reorder the education_level
+head(education_distribution)
+```
+
+For this data, we renamed the first two columns and dropped NA values by column "occupation_code". Then we used pivot_longer to make it suitable for better analysis. Besides, there were some "(1)" in column occupation, we removed these "(1)". Finally, we reordered the factor level of column education_level so that they were ranked from lowest to highest
+
+### Education and training assignments by detailed occupation
+```{r}
+education_entry <- education_entry %>%
+   rename(occupation =`2020 National Employment Matrix title`, occupation_code =`2020 National Employment Matrix code`) %>%
+  drop_na(occupation_code)
+head(education_entry)
+```
+
+For this data, we renamed the first two columns and dropped NA values by column "occupation_code".
+
+## Census of Fatal Occupational Injuries(2020)
+```{r}
+cftb_0341 <- cftb_0341 %>%
+  rename(occupation =`Occupation(1)`,occupation_code = `Occupation code(1)`,Total_fatal_injuries =`Total fatal injuries (number)`) %>% 
+  drop_na(occupation_code)
+head(cftb_0341)
+```
+
+For this data, we renamed the first three columns and dropped NA values by column "occupation_code".
+
+## 2020 National Occupational Employment and Wage Estimates
+```{r}
+national_m2020 <- national_m2020 %>%
+  dplyr::select(-1:-8,-14:-16,-30:-31)
+national_m2020 <- national_m2020[!duplicated(national_m2020$OCC_TITLE),]
+```
+
+For this data set, We dropped some useless columns and some duplicated rows.

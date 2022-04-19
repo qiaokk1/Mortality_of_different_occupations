@@ -1,2 +1,32 @@
 # Data sources
+All data sets are from U.S. BUREAU OF LABOR STATISTICS
+
+## Education and training assignments by detailed occupation(2020)
+This .xlsx file has 5 sheets. We are gonna use the fourth and the fifth sheet.
+
+### Educational attainment distribution for workers 25 years and older by detailed occupation
+```{r}
+library(tidyverse)
+library(ggridges)
+education_distribution <- readxl::read_xlsx("education.xlsx",skip=1,sheet=4)
+head(education_distribution)
+```
+
+### Education and training assignments by detailed occupation
+```{r}
+education_entry <- readxl::read_xlsx("education.xlsx",skip=1,sheet=5)
+head(education_entry)
+```
+
+## Census of Fatal Occupational Injuries(2020)
+```{r}
+cftb_0341 <- readxl::read_xlsx("cftb0341.xlsx", skip = 3)
+head(cftb_0341)
+```
+
+## 2020 National Occupational Employment and Wage Estimates
+```{r}
+national_m2020 <- readxl::read_xlsx("national_M2020_dl.xlsx")
+head(national_m2020)
+```
 
