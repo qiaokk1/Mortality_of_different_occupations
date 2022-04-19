@@ -1,3 +1,29 @@
 # Interactive component
 
+##
+
+```{r}
+# Total number in each category
+tot_num <- national_m2020 %>%
+  select(OCC_CODE, TOT_EMP) %>%
+  mutate(OCC_CODE = as.character(OCC_CODE)) %>%
+  filter(endsWith(OCC_CODE, "0000"))
+
+# Mortality in each category
+mor_cat <- cftb_0341_category %>%
+  left_join(tot_num, by = c("occupation_code" = "OCC_CODE")) %>%
+  select(1:3, 10) %>%
+  mutate(mortality = as.numeric(Total_fatal_injuries)/as.numeric(TOT_EMP))
+```
+
+```{r}
+library(plotly)
+
+mor_cat %>%
+  plot_ly(x = ~occupation_code, y = ~mortality, text = ~occupation, hoverinfo = "text") %>% 
+  add_markers()%>%
+  layout(title = 'Scatterplot of Mortality rate vs Occupation code')
+```
+
+
 
