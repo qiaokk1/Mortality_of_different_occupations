@@ -1,1 +1,239 @@
 # Results
+
+## What jobs have a significantly high death rate, do they have any features in common?
+
+### Classify by major occupation groups
+```{r}
+cftb_0341_category <- cftb_0341 %>%
+  filter(!is.na(occupation_code)) %>%
+  mutate(occupation_code = as.character(occupation_code),
+         Total_fatal_injuries = as.numeric(Total_fatal_injuries)) %>%
+  filter(endsWith(occupation_code, "0000")) %>%
+  arrange(desc(Total_fatal_injuries))
+
+#top_10 <- cftb_0341 %>%
+#  head(10)
+
+ggplot(cftb_0341_category, aes(x = reorder(occupation, Total_fatal_injuries), y = Total_fatal_injuries)) +
+  geom_col(fill = "lightblue") +
+  coord_flip() +
+  theme_gray(10) +
+  scale_y_continuous(limits = c(0, 1400)) +
+  geom_text(aes(label = Total_fatal_injuries), hjust = -0.3) +
+  labs(title = "Major occupation groups with high death number",
+       subtitle = "In 2020",
+       x = "Occupation group",
+       y = "Number of people death")
+```
+
+We can tell from this plot that death numbers are high in manual work such as transportation, construction and maintenance. And death numbers are low in intellectual work such as law, IT and education.
+
+```{r}
+#Heat Map, top 10 number of people death occupation
+heat <- cftb_0341_category %>%
+  head(10)
+colnames(heat) <- str_replace_all(colnames(heat), c(" " = "_", "[(]" = "", "[)]" = "", "3" = "", "4" = "", "[,]" = ""))
+
+heat1 <- heat %>%
+  mutate(Violence_and_other_injuries_by_persons_or_animals =
+           as.numeric(str_replace(Violence_and_other_injuries_by_persons_or_animals, "-", "0")),
+         Transportation_incidents =
+           as.numeric(str_replace(Transportation_incidents, "-", "0")),
+         Fires_and_explosions =
+           as.numeric(str_replace(Fires_and_explosions, "-", "0")),
+         Falls_slips_trips =
+           as.numeric(str_replace(Falls_slips_trips, "-", "0")),
+         Exposure_to_harmful_substances_or_environments =
+           as.numeric(str_replace(Exposure_to_harmful_substances_or_environments, "-", "0")),
+         Contact_with_objects_and_equipment =
+           as.numeric(str_replace(Contact_with_objects_and_equipment, "-", "0"))) %>%
+  select(-occupation_code, -Total_fatal_injuries) %>%
+  pivot_longer(2:7, names_to = "type", values_to = "value") %>%
+  mutate(type = ifelse(type == "Transportation_incidents",
+                        "Transport_incidents", type)) %>%
+  group_by(type) %>%
+  mutate(rank = row_number())
+
+ggplot(heat1, aes(x = reorder(occupation, desc(rank)), y = gsub("_", "\n", type))) +
+  geom_raster(aes(fill = value)) +
+  theme_light(10) +
+  geom_text(aes(label = value), col = "white") +
+  coord_flip() +
+  labs(title = "Heatmap for number of  death",
+       subtitle = "In top 10 occupations with largest number of death",
+       x = "Occupation",
+       y = "Cause of death",
+       fill = "Number \n of \n people")
+```
+
+
+```{r}
+# In 53 -> most death (transpotation)
+trans <- cftb_0341 %>%
+  mutate(occupation_code = as.character(occupation_code),
+         Total_fatal_injuries = as.numeric(Total_fatal_injuries)) %>%
+  filter(startsWith(occupation_code, "53"), occupation_code != "53-0000") %>%
+  arrange(desc(Total_fatal_injuries)) %>%
+  head(10)
+
+ggplot(trans, aes(x = reorder(occupation, Total_fatal_injuries), y = Total_fatal_injuries)) +
+  geom_col(fill = "lightblue") +
+  coord_flip() +
+  theme_gray(10) +
+  scale_y_continuous(limits = c(0, 970)) +
+  geom_text(aes(label = Total_fatal_injuries), hjust = -0.3) +
+  labs(title =  "Top 10 number of death",
+       subtitle = "In catrgory of Transportation and material moving occupations",
+       x = " ",
+       y = "Number of death")
+```
+
+Here we go deeper in transportation group. we can conclude that truck drivers have relatively high death number within this category.
+
+### Classify by detailed occupations
+```{r}
+occupation_employment_number <- national_m2020 %>%
+  dplyr::select(OCC_CODE,OCC_TITLE,TOT_EMP)
+
+occupation_mortality <- left_join(cftb_0341,occupation_employment_number,by = c("occupation_code"="OCC_CODE")) %>%
+  dplyr::select(occupation,occupation_code,`Total_fatal_injuries`,TOT_EMP) %>%
+  drop_na(TOT_EMP) %>%
+  mutate(mortality=as.numeric(`Total_fatal_injuries`)/as.numeric(TOT_EMP))
+occupation_mortality <- occupation_mortality[!duplicated(occupation_mortality$occupation),]
+
+occupation_mortality %>%
+  ggplot() +
+  geom_point(aes(x=occupation_code,y=mortality)) +
+  geom_point(aes(x = "11-9010", y = 3.650794e-02), col = "red") +
+  geom_point(aes(x = "45-4021", y = 6.224066e-03), col = "red") +
+  geom_text(aes(x = "11-9010", y = 3.650794e-02, label = "Farmers, ranchers, and other agricultural managers"), hjust = -0.03) +
+  geom_text(aes(x = "45-4021", y = 6.224066e-03, label = "Fallers"), hjust = -0.2) +
+  labs(title = "Mortality rate for detailed occupation",
+       x = "Occupation",
+       y = "Mortality rate")
+```
+
+The occupation with the highest morality rate is "Farmers, ranchers, and other agricultural managers", the second is "Fallers".
+
+#### Typical requirement needed to entry these 2 occupations
+```{r}
+education_entry <- readxl::read_xlsx("education.xlsx",skip=1,sheet=5) %>%
+  rename(occupation=`2020 National Employment Matrix title`, occupation_code=`2020 National Employment Matrix code`) %>%
+  drop_na(occupation_code)
+#If there is an NA in `occupation_code`, then it means this row is not a really occupation but some notes or empty values.
+education_entry %>%
+  filter(occupation=="Farmers, ranchers, and other agricultural managers") %>%
+  pivot_longer(3:5, names_to = "Entry_Standard", values_to = "Entry_requirement") %>%
+  select(3:4)
+```
+
+The entry requirement for **Famers, ranchers, and other agricultural managers** 
+
+```{r}
+education_entry %>%
+  filter(occupation=="Fallers") %>%
+  pivot_longer(3:5, names_to = "Entry_Standard", values_to = "Entry_requirement") %>%
+  select(3:4)
+```
+
+The entry requirement for **Fallers**
+
+The Typical requirements needed to entry these 2 occupations are pretty similar.
+
+### Top 10 mortality rate occupations
+```{r}
+top10_mortality_occupation <- occupation_mortality %>%
+  arrange(desc(mortality)) %>%
+  slice(1:10) %>%
+  dplyr::select(1) %>%
+  mutate(Rank = row_number()) %>%
+  select(Rank, occupation)
+top10_mortality_occupation
+```
+
+Among these 10 occupations, 4 of them are related to "farm" and 3 of them are related to "logging".
+
+#### Education level distributions of of employees of these occupations
+```{r}
+top10_motality_education_distribution <- left_join(top10_mortality_occupation, education_distribution,
+                                                   by = c("occupation" = "occupation"))
+
+top10_motality_education_distribution %>%
+  drop_na() %>%
+  ggplot() +
+  geom_density_ridges(aes(x = percentage, y = occupation)) +
+  theme_ridges(11) +
+  labs(title = "Educational attainment distribution \n of Top 8 mortality rate of occupation",
+       x = "Distribution of education",
+       y = "Occupation name")
+  
+
+```
+
+There are 2 NAs among these 10 occupations' education level distributions: 	
+**Supervisors of farming, fishing, and forestry workers** and 
+**Logging workers**
+
+After `drop_na()`, we have 8 occupations here. From the plot we can tell that the education level distributions of these 8 occupations are similar. All distributions are right-skewed, which means most of the employees are less educated
+
+## Is there any relationship between mortality and average salary? Does one get paid higher if he is doing dangerous jobs?
+```{r}
+national_m2020$A_MEDIAN <-  as.numeric(national_m2020$A_MEDIAN)
+
+mortality_wage <- left_join(occupation_mortality,national_m2020,by=c("occupation_code" = "OCC_CODE"))
+
+mortality_wage %>%
+  ggplot() +
+  geom_point(aes(x = mortality, y = A_MEDIAN)) +
+  labs(title = "Scatterplot of annual median income vs. mortality rate",
+       x = "Mortality",
+       y = "Median annual income")
+```
+
+From this plot we can tell that there is no significant relationship between mortality and median annual income. Doing dangerous job can't significantly increase the income.
+
+## Is there any relationship between mortality and education level? If a job has higher requirement of education level, will it be less dangerous?
+```{r}
+mortality_education <- left_join(occupation_mortality, education_entry, by=c("occupation" = "occupation")) %>%
+  drop_na(`Typical education needed for entry`)
+
+mortality_education$`Typical education needed for entry` <- factor(mortality_education$`Typical education needed for entry`) %>%
+  fct_relevel("No formal educational credential", "High school diploma or equivalent", "Postsecondary nondegree award", "Associate's degree", "Bachelor's degree", "Master's degree", "Doctoral or professional degree")
+#Reorder the Typical education needed for entry
+
+mortality_education %>%
+  group_by(`Typical education needed for entry`) %>%
+  summarise(median = median(mortality)) %>%
+  ggplot() +
+  geom_point(aes(x = `Typical education needed for entry`, y = median)) +
+  theme(axis.text.x = element_text(angle = 90, hjust = 1, vjust = 0.5)) +
+  labs(title = "Scatterplot of median mortality rate vs. education level",
+       x = "Education level",
+       y = "Median mortality rate")
+```
+
+The overall trend is the higher the education level needed for entry, the lower the median mortality rate. **Associate degree** should be an outlier because it only has one row of data.
+
+## The relationship between annual income and education lelvel needed for entry
+```{r}
+education_wage <- left_join(education_entry,national_m2020,by=c("occupation_code"="OCC_CODE")) %>%
+  drop_na(`Typical education needed for entry`) %>%
+  drop_na(A_MEDIAN)
+
+education_wage$`Typical education needed for entry` <- factor(education_wage$`Typical education needed for entry`) %>%
+  fct_relevel("No formal educational credential", "High school diploma or equivalent", "Some college, no degree", "Postsecondary nondegree award", "Associate's degree", "Bachelor's degree", "Master's degree","Doctoral or professional degree")
+
+education_wage %>%
+  group_by(`Typical education needed for entry`) %>%
+  summarise(median=median(A_MEDIAN)) %>%
+  ggplot(aes(x=`Typical education needed for entry`, y = median)) +
+  geom_point() +
+  geom_smooth(aes(x = c(1:8), y = median), method = "loess", se = FALSE, col = "red") +
+  theme_gray(12) +
+  theme(axis.text.x = element_text(angle=90, hjust=1, vjust=.5)) +
+  labs(title = "Annual median income in each education level",
+       x = "Education level",
+       y = "Median annnual income")
+```
+
+Since income data is right-skewed, using the mean may falsely exaggerate income. Here we use median income as a measure. From the plot we can tell that the higher the education level needed for entry, the higher the median annual income. Income is positively correlated with education level needed for entry.
