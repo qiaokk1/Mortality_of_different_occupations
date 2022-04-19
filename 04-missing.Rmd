@@ -1,1 +1,57 @@
 # Missing values
+
+There are some NAs in these data sets, but we shouldn't drop them here. Because we are going to join different data sets and then there will be new NAs, we can drop them together later.
+
+## 2020 National Occupational Employment and Wage Estimates
+```{r}
+national <- national_m2020 %>%
+  select(OCC_CODE, OCC_TITLE, TOT_EMP, H_MEDIAN, A_MEDIAN) %>%
+  mutate(H_MEDIAN = str_replace_all(H_MEDIAN, c("[*]" = NA, "[#]" = "208000")),
+         A_MEDIAN = str_replace_all(A_MEDIAN, c("[*]" = NA, "[#]" = "208000")))
+
+colSums(is.na(national))
+
+row_missing <- national %>%
+  mutate(id = row_number()) %>%
+  gather(-id, key = "key", value = "val") %>%
+  mutate(isna = is.na(val)) %>%
+  ggplot(aes(key, id, fill = isna)) +
+    geom_raster(alpha=0.8) +
+    scale_fill_manual(name = "",
+        values = c('steelblue', 'tomato3'),
+        labels = c("Present", "Missing")) +
+    labs(x = "Variable",
+           y = "Row Number", title = "Missing values in rows") +
+    coord_flip()
+
+missing <- national %>%
+  gather(key = "key", value = "val") %>%
+  mutate(isna = is.na(val)) %>%
+  group_by(key) %>%
+  mutate(total = n()) %>%
+  group_by(key, total, isna) %>%
+  summarise(num.isna = n()) %>%
+  mutate(pct = num.isna / total * 100)
+
+prectage <- missing %>%
+      ggplot() +
+        geom_bar(aes(x = reorder(key, desc(pct)), 
+                     y = pct, fill=isna), 
+                 stat = 'identity', alpha=0.8) +
+      scale_fill_manual(name = "", 
+                        values = c('steelblue', 'tomato3'), labels = c("Present", "Missing")) +
+      coord_flip() +
+      labs(title = "Percentage of missing values", 
+           x = 'Variable', 
+           y = "percent of missing values")
+prectage
+row_missing
+```
+
+```{r}
+national_m2020 <- national_m2020 %>%
+  filter(A_MEDIAN != "*")
+national_m2020$A_MEDIAN <-  str_replace(national_m2020$A_MEDIAN,"#","208000")
+```
+
+This data set has some "\*" in A_MEDIAN column, according to notes, "\*" indicates that a wage estimate is not available, we should drop these "\*" here. And there are also some "#" in A_MEDIAN column, according to notes, "#" indicates a wage equal to or greater than $208,000 per year. We replaced "#" by 208000 here.
