@@ -1,6 +1,6 @@
 # Interactive component
 
-##
+## Interactive plot for Mortality rate vs. different occupation
 
 ```{r}
 # Total number in each category
@@ -22,7 +22,7 @@ library(plotly)
 mor_cat %>%
   plot_ly(x = ~occupation_code, y = ~mortality, text = ~occupation, hoverinfo = "text") %>% 
   add_markers()%>%
-  layout(title = 'Scatterplot of Mortality rate vs Occupation code')
+  layout(title = 'Scatterplot of Mortality rate vs Occupation')
 ```
 
 
