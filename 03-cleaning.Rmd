@@ -23,7 +23,7 @@ For this data, we renamed the first two columns and dropped NA values by column 
 ### Education and training assignments by detailed occupation
 ```{r}
 education_entry <- education_entry %>%
-   rename(occupation =`2020 National Employment Matrix title`, occupation_code =`2020 National Employment Matrix code`) %>%
+  rename(occupation =`2020 National Employment Matrix title`, occupation_code =`2020 National Employment Matrix code`) %>%
   drop_na(occupation_code)
 head(education_entry)
 ```
