@@ -65,7 +65,8 @@ ggplot(heat1, aes(x = reorder(occupation, desc(rank)), y = gsub("_", "\n", type)
        y = "Cause of death",
        fill = "Number \n of \n people")
 ```
-
+The top 2 causes of death are **Transportation accidents** and **Falls, slips, trips**
+The least cause of death is **Fires and explosions** 
 
 ```{r}
 # In 53 -> most death (transpotation)
