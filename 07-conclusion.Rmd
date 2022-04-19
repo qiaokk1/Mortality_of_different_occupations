@@ -1,2 +1,17 @@
 # Conclusion
 
+## What jobs have a significantly high death rate, do they have any features in common?
+By major occupation groups, that death numbers are high in manual work such as transportation, construction and maintenance. And death numbers are low in intellectual work such as law, IT and education.
+
+By detailed occupations, the occupation with the highest morality is "Farmers, ranchers, and other agricultural managers", the second is "Fallers".
+
+In conclusion, manual work has higher mortality rate, intellectual work has lower mortality rate. Besides, the lower the education level needed for entry, the higher the mortality rate. And among manual jobs, those related to nature, farm or logging have the highest mortality rate.
+
+## Is there any relationship between mortality and average salary? Does one get paid higher if he is doing dangerous jobs?
+No, there is no clear relationship between mortality rate and average salary. Doing dangerous job can't significantly increase the income.
+
+## Is there any relationship between mortality and education level? If a job has higher requirement of education level, will it be less dangerous?
+Yes, mortality rate is negatively correlated with typical education needed for entry. The higher the typical education needed for entry, the lower the mortality rate.
+
+## Then what factors affect the income of a job?
+Based on our data sets, the answer is education level. The higher the education level needed for entry, the higher the median annual income of this job. Income is positively correlated with education level needed for entry.
