@@ -27,7 +27,7 @@ is-there-any-relationship-between-mortality-and-average-salary-does-one-get-paid
 is-there-any-relationship-between-mortality-and-education-level-if-a-job-has-higher-requirement-of-education-level-will-it-be-less-dangerous
 the-relationship-between-annual-income-and-education-lelvel-needed-for-entry
 interactive-component
-section
+interactive-plot-for-mortality-rate-vs.-different-occupation
 conclusion
 what-jobs-have-a-significantly-high-death-rate-do-they-have-any-features-in-common-1
 is-there-any-relationship-between-mortality-and-average-salary-does-one-get-paid-higher-if-he-is-doing-dangerous-jobs-1
