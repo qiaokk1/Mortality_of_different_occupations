@@ -23,7 +23,7 @@
 <meta name="author" content="Zhongtian Qiao &amp; Haoyuan Sun" />
 
 
-<meta name="date" content="2022-04-19" />
+<meta name="date" content="2022-04-20" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -201,6 +201,18 @@
 </div>
 <div id="national-occupational-employment-and-wage-estimates-1" class="section level2 hasAnchor" number="3.3">
 <h2><span class="header-section-number">3.3</span> 2020 National Occupational Employment and Wage Estimates<a href="data-transformation.html#national-occupational-employment-and-wage-estimates-1" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<pre><code>## # A tibble: 6 × 18
+##   OCC_CODE OCC_TITLE    O_GROUP TOT_EMP EMP_PRSE H_MEAN A_MEAN MEAN_PRSE H_PCT10
+##   &lt;chr&gt;    &lt;chr&gt;        &lt;chr&gt;   &lt;chr&gt;   &lt;chr&gt;    &lt;chr&gt;  &lt;chr&gt;      &lt;dbl&gt; &lt;chr&gt;  
+## 1 00-0000  All Occupat… total   139099… 0.1      27.07  56310        0.1 10.97  
+## 2 11-0000  Management … major   7947300 0.2      60.81  126480       0.2 24.84  
+## 3 11-1000  Top Executi… minor   2601070 0.4      62.46  129920       0.2 21.41  
+## 4 11-1010  Chief Execu… broad   202360  1        95.12  197840       0.5 30.18  
+## 5 11-1020  General and… broad   2347420 0.4      60.45  125740       0.2 22.04  
+## 6 11-1030  Legislators  broad   51290   2.5      *      53560        1.6 *      
+## # … with 9 more variables: H_PCT25 &lt;chr&gt;, H_MEDIAN &lt;chr&gt;, H_PCT75 &lt;chr&gt;,
+## #   H_PCT90 &lt;chr&gt;, A_PCT10 &lt;chr&gt;, A_PCT25 &lt;chr&gt;, A_MEDIAN &lt;chr&gt;, A_PCT75 &lt;chr&gt;,
+## #   A_PCT90 &lt;chr&gt;</code></pre>
 <p>For this data set, We dropped some useless columns and some duplicated rows.</p>
 
 </div>
