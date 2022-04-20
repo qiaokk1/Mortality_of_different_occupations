@@ -67,6 +67,7 @@ ggplot(heat1, aes(x = reorder(occupation, desc(rank)), y = gsub("_", "\n", type)
 ```
 
 The top 2 causes of death are **Transportation accidents** and **Falls, slips, trips**
+
 The least cause of death is **Fires and explosions** 
 
 ```{r}
@@ -115,7 +116,7 @@ occupation_mortality %>%
        y = "Mortality rate")
 ```
 
-The occupation with the highest morality rate is "Farmers, ranchers, and other agricultural managers", the second is "Fallers".
+The occupation with the highest morality rate is **"Farmers, ranchers, and other agricultural managers"**, the second is **"Fallers"**.
 
 #### Typical requirement needed to entry these 2 occupations
 ```{r}
