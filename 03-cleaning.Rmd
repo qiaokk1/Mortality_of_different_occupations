@@ -45,6 +45,8 @@ For this data, we renamed the first three columns and dropped NA values by colum
 national_m2020 <- national_m2020 %>%
   dplyr::select(-1:-8,-14:-16,-30:-31)
 national_m2020 <- national_m2020[!duplicated(national_m2020$OCC_TITLE),]
+
+head(national_m2020)
 ```
 
 For this data set, We dropped some useless columns and some duplicated rows.
